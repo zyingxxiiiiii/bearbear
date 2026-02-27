@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Bear 🐻</title>
+
+<!-- Google Font: Gamja Flower -->
+<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+
+<style>
+/* GLOBAL STYLES */
+body {
+    margin: 0;
+    font-family: 'Gamja Flower', cursive;
+    background: #AEC6CF;
+    overflow-x: hidden;
+}
+h1,h2,h3,p,button { font-family: 'Gamja Flower', cursive; }
+button {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    background: #B0E0E6;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 15px;
+    transition: all 0.3s;
+}
+button:hover { background: #99d6eb; transform: scale(1.05); }
+
+/* PASSWORD SCREEN */
+#lockScreen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+#lockScreen input {
+    padding: 12px;
+    border-radius: 20px;
+    border: none;
+    text-align: center;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* MAIN SECTIONS */
+section { min-height: 100vh; display: none; padding: 50px 20px; text-align:center; position: relative; }
+
+/* FLOATING HEARTS */
+.heart {
+    position: fixed;
+    bottom: -10px;
+    animation: floatUp 6s linear infinite;
+    pointer-events: none;
+}
+@keyframes floatUp {0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
+
+/* CONFETTI */
+.confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: #FFD1DC;
+    opacity: 0.8;
+    pointer-events: none;
+    animation: confettiFall 3s linear forwards;
+}
+@keyframes confettiFall {0% {transform: translateY(0) rotate(0deg);} 100% {transform: translateY(100vh) rotate(360deg); opacity:0;}}
+
+/* POLAROID CAROUSEL DESKTOP */
+.carousel-container {
+    position: relative;
+    width: 550px;
+    margin: 40px auto;
+    overflow: hidden;
+}
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+.carousel-item {
+    min-width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+.polaroid {
+    width: 500px;
+    background: white;
+    padding: 15px 15px 35px 15px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    text-align: center;
+    transform: rotate(-1deg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+}
+.polaroid:hover {
+    transform: rotate(0deg) scale(1.05);
+    box-shadow: 0 20px 25px rgba(0,0,0,0.25);
+}
+.polaroid img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+.polaroid p {
+    margin-top: 8px;
+    font-size: 16px;
+    color: #4da6ff;
+}
+
+/* LETTER POPUP */
+#letterPopup {
+    display:none;
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    background:#ffffffcc;
+    padding:30px;
+    border-radius:20px;
+    width:85%;
+    max-width:500px;
+    box-shadow:0 0 25px rgba(0,0,0,0.2);
+    max-height:70vh;
+    overflow-y:auto;
+    text-align:left;
+}
+
+/* VOUCHER POPUP */
+#voucherPopup {
+    display:none;
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    background:#ffffffcc;
+    padding:30px;
+    border-radius:20px;
+    width:90%;
+    max-width:500px;
+    box-shadow:0 0 25px rgba(0,0,0,0.2);
+    text-align:center;
+}
+.voucher-card {
+    background:#B0E0E6;
+    margin:10px;
+    padding:15px;
+    border-radius:15px;
+    font-size:18px;
+    cursor:pointer;
+    transition:all 0.3s;
+}
+.voucher-card:hover { background:#99d6eb; transform:scale(1.05); }
+
+#countdown { font-size:40px; margin-top:20px; color:#ffffffcc; }
+
+/* ENDING */
+#ending {
+    padding: 50px 20px;
+    text-align: center;
+    display: none;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    min-height: 100vh;
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD SCREEN -->
+<div id="lockScreen">
+<h2>Who loves bear bear the most?</h2>
+<input type="text" id="passwordInput" placeholder="Type answer here">
+<button type="button" onclick="checkPassword()">Unlock your birthday surprise 💌</button>
+</div>
+
+<!-- SECTION 1: GREETING -->
+<section id="section1">
+<audio id="bgMusic" src="music.mp3" loop></audio>
+<h1>Hi Bear! 🐻</h1>
+<p>It's your birthday, I miss you so much and it's a pity that we can't celebrate together this year, but here's something I prepared for you (from a baby that never did coding before 💙)</p>
+<button onclick="nextSection(1)">Next 💫</button>
+</section>
+
+<!-- SECTION 2: POLAROID CAROUSEL -->
+<section id="section2">
+<h2>First, let's refresh our favourite memories 💙</h2>
+<div class="carousel-container" id="carouselContainer">
+    <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-item" onclick="nextPhoto()">
+            <div class="polaroid"><img src="photo1.jpg" alt="Memory 1">
+            <p>Our first date bear 🐻 you picked me up from my house, bought me flowers, we went to so many nice places, you hugged me in the Photo Booth, I was shocked and shy that day. But I often wonder if you already fell in love with me on that day, or was it later or was it even way before we met in person? Till now I still have goosebumps on how we met, as if the whole universe wanted us to meet.</p>
+            </div>
+        </div>
+        <div class="carousel-item" onclick="nextPhoto()">
+            <div class="polaroid"><img src="photo2.jpg" alt="Memory 2">
+            <p>Our one third date in December 💙 you held my hand that day, we were like a couple, we got physically so close in the library and we kissed. I had butterflies in my tummy. I wanted you to kiss me so badly already so I kissed your cheek first, and as expected you kissed me. You're the first and only person that makes me feel like I want to kiss you forever even without doing anything further. I still remember how heart fluttering it was when you ran back to me with the fruit juices in your hands, it just felt like you liked me a lot and the whole moment was just pure and simple happiness.</p>
+            </div>
+        </div>
+        <div class="carousel-item" onclick="nextPhoto()">
+            <div class="polaroid"><img src="photo3.jpg" alt="Memory 3">
+            <p>1.1.2026 That day I didn’t want to leave. We got together that day, you got me flowers again and brought me for countdown together. I am so happy that I got the best view for NYE because of you and you always made sure I was comfortable.</p>
+            </div>
+        </div>
+        <div class="carousel-item" onclick="nextPhoto()">
+            <div class="polaroid"><img src="photo4.jpg" alt="Memory 4">
+            <p>🌅You said you liked this picture because we were both doing what we love… together. I hope we can always do this — find joy in our own passions while sharing life with each other. Those moments, just being ourselves and feeling completely at ease with one another, are the moments I treasure most. I want a lifetime of them with you.</p>
+            </div>
+        </div>
+        <div class="carousel-item" onclick="nextPhoto()">
+            <div class="polaroid"><img src="photo5.jpg" alt="Memory 5">
+            <p>Swimming together, laughing, talking… even the quiet moments, when it was just us, felt like the world had shrunk to only the two of us. I’ll always remember how safe and happy I felt with you there, how small everything else seemed. I want to keep making memories like that — where the simple things with you feel so extraordinary.</p>
+            </div>
+        </div>
+        <div class="carousel-item" onclick="nextPhoto()">
+            <div class="polaroid"><img src="photo6.jpg" alt="Memory 6">
+            <p>I miss every little thing you do for me — the way you put on my body lotion, wear socks for me, hold my shoes, feed me, dry my hair, massage my legs, doing all the house chores and never allowing me to do anything, making sure everything is in check. Every small gesture shows me how deeply you care, and it makes me love you all over again. It’s these tiny, perfect things that make our life together feel magical. I don’t want to take any of them for granted, ever. 💖</p>
+            </div>
+        </div>
+    </div>
+</div>
+<p style="font-size:14px; color:#555;">Click the photo to see the next 💙</p>
+<button onclick="nextSection(2)">Next 💌</button>
+</section>
+
+
+<!-- SECTION 3: LETTER -->
+<section id="section3">
+<button onclick="openLetter()">Open your birthday letter 🎁</button>
+<br><br>
+<button onclick="nextSection(3)">Next 💌</button>
+</section>
+
+<div id="letterPopup">
+<h2>Happy Birthday Bear 💙</h2>
+<p id="letterText"></p>
+<button onclick="closeLetter()">Close</button>
+</div>
+
+<!-- SECTION 4: COUNTDOWN -->
+<section id="section4">
+<h2>Days until I see you again 💙</h2>
+<div id="countdown">40</div>
+<button onclick="nextSection(4)">Next 💌</button>
+</section>
+
+<!-- SECTION 5: VOUCHERS -->
+<section id="section5">
+<button onclick="openVoucher()">Tap to claim your vouchers 🎀</button>
+</section>
+
+<div id="voucherPopup">
+<h2>Your Vouchers 💙</h2>
+<div class="voucher-card" onclick="popHeart('👅')">Voucher for papapa</div>
+<div class="voucher-card" onclick="popHeart('😘')">Voucher for kiss</div>
+<div class="voucher-card" onclick="popHeart('🥵')">Voucher for hug</div>
+<div class="voucher-card" onclick="popHeart('😓')">Voucher for forgiveness</div>
+<div class="voucher-card" onclick="popHeart('💍')">Voucher to forever</div>
+<button onclick="closeVoucher(); showEnding();">Close</button>
+</div>
+
+<!-- ENDING SECTION -->
+<section id="ending">
+<h2>All done! 💖</h2>
+<p>
+Bear bear, I hope this little surprise made you smile! 🐻<br>
+I can’t wait to hug you, laugh with you, and make more memories together.<br>
+Until then, remember: you are loved more than words can say 💙
+</p>
+</section>
+
+<script>
+// PASSWORD
+function checkPassword() {
+    var input = document.getElementById("passwordInput").value.toLowerCase().trim();
+    if(input === "baby") {
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("section1").style.display = "block";
+        const bgMusic = document.getElementById("bgMusic");
+        bgMusic.play().catch(e => { console.log("Music blocked"); });
+        startHearts();
+    } else { alert("Wrong answer 🐻 Try again!"); }
+}
+
+// HEARTS
+function startHearts(){
+    setInterval(function(){
+        var heart=document.createElement("div");
+        heart.className="heart";
+        heart.innerHTML=Math.random()>0.5?"💙":"🤍";
+        heart.style.left=Math.random()*100+"vw";
+        heart.style.fontSize=(Math.random()*20+15)+"px";
+        document.body.appendChild(heart);
+        setTimeout(()=>heart.remove(),6000);
+    },500);
+}
+
+// CONFETTI
+function launchConfetti(){
+    for(let i=0;i<50;i++){
+        let c=document.createElement("div");
+        c.className="confetti-piece";
+        c.style.left=Math.random()*100+"vw";
+        c.style.background=["#FFD1DC","#FFB347","#B0E0E6","#FFFFFF"][Math.floor(Math.random()*4)];
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),3000);
+    }
+}
+
+// TYPEWRITER LETTER
+const letterContent = `My dearest Bear Bear,
+
+Happy Birthday to the most special and favorite person in my life,
+
+I wish I could be there beside you today to see your smile, hear your laugh, and feel your hand in mine. Until that day comes, I hope this little surprise reminds you of just how deeply you are loved and cherished.
+
+Thank you for all the little things you do for us. The moments you think go unnoticed, the way you put yourself out there for us, even when it’s hard. I notice everything: the way you brush my hair back, hold my hand, wear my socks for me, or make me laugh when I feel down. It makes me feel safe, cared for, and so loved. You push yourself so much, yet somehow you still make me feel like I’m your priority. That means more than I can ever say. You’re already the best man in my eyes, whatever you do, I’m proud of you, always. I know you carry so much, even when it’s unseen, and I want you to know that I see you, and I love you for it.
+
+I can’t wait for the day we don’t have to celebrate through a screen. When we can be together, laugh together, kiss, papapa and make memories that are just ours. I can’t wait for the quiet moments, the silly moments, and even the hard moments, because every moment with you feels meaningful. Until then, I’m sending all my hugs, all my warmth, and all my love through this little surprise.
+
+I love you more than Bear Bear knows. No matter what the world throws at us, I want to face it all with you by my side, today and always. I hope you like the cake I got you and your present will come to your hands when we meet! Please look forward to it hehe!
+
+Yours forever,
+Baby 💙`;
+
+function typeWriter(text,id,delay=30){
+    const el=document.getElementById(id);
+    el.innerHTML="";
+    let i=0;
+    let t=setInterval(()=>{
+        if(text.charAt(i)==="\n"){ el.innerHTML+="<br>"; }
+        else { el.innerHTML+=text.charAt(i); }
+        i++;
+        if(i>=text.length) clearInterval(t);
+    },delay);
+}
+
+// SECTION NAVIGATION
+function nextSection(current){
+    document.getElementById("section"+current).style.display="none";
+    document.getElementById("section"+(current+1)).style.display="block";
+}
+
+// LETTER POPUP
+function openLetter(){
+    document.getElementById("letterPopup").style.display="block";
+    launchConfetti();
+    typeWriter(letterContent,"letterText",20);
+}
+function closeLetter(){ document.getElementById("letterPopup").style.display="none"; }
+
+// VOUCHERS
+function openVoucher(){ document.getElementById("voucherPopup").style.display="block"; }
+function closeVoucher(){ document.getElementById("voucherPopup").style.display="none"; }
+function popHeart(emoji){
+    let heart=document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML=emoji;
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(Math.random()*25+15)+"px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),2000);
+}
+
+// SHOW ENDING AFTER VOUCHERS
+function showEnding(){
+    const ending = document.getElementById('ending');
+    ending.style.display = 'block';
+    let opacity = 0;
+    const fadeIn = setInterval(()=>{
+        opacity += 0.02;
+        ending.style.opacity = opacity;
+        if(opacity >= 1) clearInterval(fadeIn);
+    }, 20);
+    launchConfetti();
+    for(let i=0;i<50;i++){
+        let heart=document.createElement("div");
+        heart.className="heart";
+        heart.innerHTML="💙";
+        heart.style.left=Math.random()*100+"vw";
+        heart.style.fontSize=(Math.random()*25+15)+"px";
+        document.body.appendChild(heart);
+        setTimeout(()=>heart.remove(),4000);
+    }
+}
+
+// COUNTDOWN
+var daysLeft=40;
+var countdownEl=document.getElementById("countdown");
+function updateCountdown(){countdownEl.innerHTML=daysLeft;}
+updateCountdown();
+
+// POLAROID CAROUSEL
+let currentIndex = 0;
+const track = document.getElementById('carouselTrack');
+const items = track.children;
+
+function updateCarousel() { track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)'; }
+function nextPhoto() { currentIndex = (currentIndex + 1) % items.length; updateCarousel(); }
+function prevPhoto() { currentIndex = (currentIndex - 1 + items.length) % items.length; updateCarousel(); }
+
+// MOBILE SWIPE
+let startX = 0, endX = 0;
+const carouselContainer = document.getElementById('carouselContainer');
+carouselContainer.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+carouselContainer.addEventListener('touchmove', e => { endX = e.touches[0].clientX; });
+carouselContainer.addEventListener('touchend', () => {
+    if(startX - endX > 50) nextPhoto();
+    if(endX - startX > 50) prevPhoto();
+});
+</script>
+
+</body>
+</html>
